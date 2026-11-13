@@ -41,5 +41,8 @@
 
 10. create glassflow rius api key
 
+### • Phase 2 — Al Engineering : RAG, memory, guardrails, observability, HITL, and LangGraph.
+
+
 
 
