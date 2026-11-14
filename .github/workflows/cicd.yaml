@@ -311,28 +311,43 @@ jobs:
       # VERIFY DEPLOYMENT
       # ----------------------------------------
 
+      
       - name: Verify Deployment
         run: |
           set -euo pipefail
 
-          sleep 10
+          echo "Checking Docker container..."
 
           if ! docker inspect \
             -f '{{.State.Running}}' \
             atlas-enterprise-ai | grep -qx true; then
 
             echo "::error::Container is not running"
-            docker logs --tail 100 atlas-enterprise-ai
+            docker logs --tail 150 atlas-enterprise-ai
             exit 1
           fi
 
-          curl --fail --silent --show-error \
-            --retry 5 \
+          echo "Checking Docker port mapping..."
+          docker port atlas-enterprise-ai
+
+          echo "Checking application health..."
+
+          if ! curl \
+            --fail \
+            --silent \
+            --show-error \
+            --retry 10 \
             --retry-delay 3 \
-            http://127.0.0.1:8000/ \
-            > /dev/null
+            --retry-connrefused \
+            http://127.0.0.1:8000/health; then
+
+            echo "::error::Application health check failed"
+            docker logs --tail 150 atlas-enterprise-ai
+            exit 1
+          fi
 
           echo "Atlas Enterprise AI deployed successfully"
+
 
       # ----------------------------------------
       # CLEANUP
