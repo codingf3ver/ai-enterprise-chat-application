@@ -34,6 +34,7 @@ files = [
     "app/guardrails.py",
     "app/graph.py",
     "app/observability.py",
+    "app/demo_context.py",
 
     # Frontend
     "app/templates/index.html",
